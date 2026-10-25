@@ -1,5 +1,5 @@
 {
-  "name": "trgino/slonik",
+  "name": "trgino/postgresql-drop-in",
   "description": "PostgreSQL support for WordPress (wpdb drop-in with an AST-based MySQL-to-PostgreSQL translator).",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
