@@ -1,0 +1,23 @@
+# Files and folders excluded from the release zip (end-user distribution).
+# Development / CI / tooling only — not shipped with the plugin.
+
+.git/
+.github/
+vendor/
+tools/
+tests/
+docs/
+composer.json
+composer.lock
+phpcs.xml.dist
+phpstan.neon.dist
+phpunit.xml.dist
+.editorconfig
+.gitattributes
+.gitignore
+.distignore
+TODO-cleanup.md
+
+# Keep the public-facing markdown files; drop everything else.
+*.md
+!README.md

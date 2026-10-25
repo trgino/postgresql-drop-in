@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build release zip
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build release zip
+        id: build
+        run: |
+          VERSION="$(grep -m1 'Version:' postgresql-drop-in.php | sed 's/[^0-9.]//g')"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "file=postgresql-drop-in-$VERSION.zip" >> "$GITHUB_OUTPUT"
+          zip -r "postgresql-drop-in-$VERSION.zip" . \
+            -x '.git/*' \
+            -x '.github/*' \
+            -x 'vendor/*' \
+            -x 'tools/*' \
+            -x 'tests/*' \
+            -x 'docs/*' \
+            -x 'composer.*' \
+            -x 'phpcs.xml.dist' \
+            -x 'phpstan.neon.dist' \
+            -x 'phpunit.xml.dist' \
+            -x '.editorconfig' \
+            -x '.gitattributes' \
+            -x '.gitignore' \
+            -x '.distignore' \
+            -x '*.md' \
+            -x 'TODO-cleanup.md'
+          ls -la "postgresql-drop-in-$VERSION.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-drop-in-${{ steps.build.outputs.version }}
+          path: ${{ steps.build.outputs.file }}
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "PostgreSQL Drop-in ${{ steps.build.outputs.version }}" \
+            --generate-notes \
+            "${{ steps.build.outputs.file }}"
