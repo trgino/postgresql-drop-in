@@ -1,0 +1,106 @@
+# The plugin compatibility matrix environment (development only).
+# Usage (from repo root):
+#   docker compose -f tools/matrix/docker-compose.yml up -d db pgtarget
+#   docker compose -f tools/matrix/docker-compose.yml run --rm wpcli sh /matrix/tools/matrix/run.sh
+#
+# The source is MySQL (the site's database), the target is PostgreSQL:
+# the migration moves the data, the drop-in then runs the site on
+# PostgreSQL.
+name: slonik-matrix
+
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wp
+    # The WP-CLI client has no CA bundle for the auto-generated
+    # certificate. MySQL 8.4 removed --skip-ssl; the empty TLS version
+    # list disables the encrypted connections. mysql_native_password
+    # keeps the WP's mysqli working over the plain channel.
+    command: --tls-version= --mysql-native-password=ON
+    healthcheck:
+      # The client has no CA bundle and the server has no TLS: the
+      # password exchange needs the server's RSA public key.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot", "--get-server-public-key"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    ports:
+      - "13307:3306"
+
+  pgtarget:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: m6mig
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    ports:
+      - "15433:5432"
+
+  wpcli:
+    # The stock image has no pdo_pgsql: the migration tool needs it.
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: wpcli
+    image: slonik-matrix-wpcli
+    user: root
+    depends_on:
+      db:
+        condition: service_healthy
+      pgtarget:
+        condition: service_healthy
+    environment:
+      WP_VERSION: ${WP_VERSION:-latest}
+    volumes:
+      - wpfiles:/var/www/html
+      # The repository root: the plugin under test is the repository.
+      - ../..:/matrix:ro
+      - ./out:/out
+
+  web:
+    # The site under test over HTTP: the same wpfiles volume the wpcli
+    # service writes into; pdo_pgsql lets it serve the site from
+    # PostgreSQL through the drop-in once the cutover happened (K-55).
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    image: slonik-matrix-web
+    depends_on:
+      db:
+        condition: service_healthy
+      pgtarget:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    volumes:
+      - wpfiles:/var/www/html
+      # The postgresql-drop-in plugin is a symlink into /matrix (the
+      # repository); the drop-in's bootstrap needs that path to exist in
+      # this container too or REST requests fatal out (K-55 audit).
+      - ../..:/matrix:ro
+
+  e2e:
+    # The WooCommerce Playwright oracle runner (K-55). The checkout is
+    # baked at build time under WOOCOMMERCE_REF; to bump the version set
+    # the variable and rebuild both sides (wpcli install pin + this
+    # image).
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: e2e
+      args:
+        WOOCOMMERCE_REF: ${WOOCOMMERCE_REF:-11.2.1}
+    image: slonik-matrix-e2e
+    volumes:
+      - ../..:/matrix:ro
+      - ./out:/out
+
+volumes:
+  wpfiles:

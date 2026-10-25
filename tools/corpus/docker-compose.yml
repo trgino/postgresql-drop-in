@@ -1,0 +1,35 @@
+# Corpus capture environment (development only).
+# Usage (from repo root):
+#   docker compose -f tools/corpus/docker-compose.yml run --rm wpcli sh /corpus/run.sh
+# Output: tools/corpus/out/corpus-raw.jsonl (git-ignored)
+name: slonik-corpus
+
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wp
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  wpcli:
+    image: wordpress:cli-php8.3
+    user: root
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      WP_VERSION: ${WP_VERSION:-latest}
+      SLONIK_CORPUS_FILE: /out/corpus-raw.jsonl
+      SLONIK_CORPUS_SOURCE: ${SLONIK_CORPUS_SOURCE:-core}
+    volumes:
+      - wpfiles:/var/www/html
+      - ./:/corpus:ro
+      - ./out:/out
+
+volumes:
+  wpfiles:

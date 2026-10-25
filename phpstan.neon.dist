@@ -1,0 +1,26 @@
+parameters:
+	phpVersion: 70400
+	level: 5
+	paths:
+		- postgresql-drop-in.php
+		- src
+		- tools/corpus/capture-db.php
+		- tools/corpus/stats.php
+		- tools/cli/guard-db.php
+		- tools/diff/lib.php
+		- tools/diff/run.php
+		- tools/matrix/fetch.php
+		- tools/matrix/scan.php
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	scanFiles:
+		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+		- tests/phpstan-wpcli-stub.php
+		- third-party/mysql-parser/src/parser/class-wp-parser-token.php
+		- third-party/mysql-parser/src/parser/class-wp-parser-node.php
+		- third-party/mysql-parser/src/parser/class-wp-parser-grammar.php
+		- third-party/mysql-parser/src/parser/class-wp-parser.php
+		- third-party/mysql-parser/src/class-wp-mysql-token.php
+		- third-party/mysql-parser/src/class-wp-mysql-lexer.php
+		- third-party/mysql-parser/src/class-wp-mysql-parser-factory.php
+	treatPhpDocTypesAsCertain: false

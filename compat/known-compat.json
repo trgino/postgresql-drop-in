@@ -1,0 +1,138 @@
+{
+    "schema": 1,
+    "entries": [
+        {
+            "slug": "query-monitor",
+            "version": "4.0.7",
+            "tree_hash": "sha256:d64736e795bd65f713be7fb83b1c7d0b356ad112eca7cc2f52fed0c380328683",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the panel queries run, no compat-log entries."
+        },
+        {
+            "slug": "akismet",
+            "version": "5.7.2",
+            "tree_hash": "sha256:8911ee01c7a7b4b695724d79f80e956e73be856ecde37666b6fb0982caaf1f1b",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the comment queries run, no compat-log entries."
+        },
+        {
+            "slug": "classic-editor",
+            "version": "1.7.0",
+            "tree_hash": "sha256:2c1e9ed72a75efdfe771b87659fcbfca7c9748e3efe2892479ae16b4a33c31db",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; no database writes, no compat-log entries."
+        },
+        {
+            "slug": "wp-super-cache",
+            "version": "3.1.4",
+            "tree_hash": "sha256:9df79ff8ab219956ed6d57d83968f12b6c067afe05913cacee494661acfc905c",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the cache tables are queried, no compat-log entries."
+        },
+        {
+            "slug": "all-in-one-wp-migration",
+            "version": "7.112",
+            "tree_hash": "sha256:5c7f5831debc0b7bee58a1bd5209572991dc51e67f017c55f4339fa0a89b3600",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the export queries run, no compat-log entries."
+        },
+        {
+            "slug": "wp-mail-smtp",
+            "version": "4.10.3",
+            "tree_hash": "sha256:d9fe060321605e927f06d37c4b66e71f7ceb5d8cc9204316b7a637f16e46216f",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the options queries run (DATABASE() is mapped), no compat-log entries."
+        },
+        {
+            "slug": "woocommerce",
+            "version": "11.2.1",
+            "tree_hash": "sha256:36aea5a7a49f25b0fb176c610a2f04d0b87bb3de81059ce85f407d7a41741a07",
+            "result": "incompatible",
+            "deviations": [
+                "D-55",
+                "D-58",
+                "D-59"
+            ],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "The site runs on PostgreSQL (the core queries work), but the plugin installer/updater fails: INFORMATION_SCHEMA.STATISTICS (D-55). The ALTER TABLE family (ADD KEY, DROP/ADD PRIMARY KEY, ALTER COLUMN SET DEFAULT) translates since D-79 v1 (R-078). The scheduled actions are stored byte for byte: the schedule column targets bytea, so the serialized PHP object with its NUL bytes survives the migration and the runtime writes (D-63, D-74). The compat log reports 2 errors for the plugin."
+        },
+        {
+            "slug": "contact-form-7",
+            "version": "6.2.3",
+            "tree_hash": "sha256:46063ac0678b484cd7a5bcb2be537a4191eccb7afe11c3d4191680674476a3fd",
+            "result": "compatible",
+            "deviations": [],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "Installed and activated on PostgreSQL 16 through the drop-in; the plugin tables are created (DROP TABLE IF EXISTS is translated) and the plugin queries run, no compat-log entries."
+        },
+        {
+            "slug": "wordfence",
+            "version": "9.0.2",
+            "tree_hash": "sha256:3f2361053edd882eb6afe7939157cfcde5fe3c41ab2f6861336d35aa60e689e1",
+            "result": "incompatible",
+            "deviations": [
+                "D-55",
+                "D-76"
+            ],
+            "tested_with": {
+                "wp": "7.1.3",
+                "pg": "16.0.15",
+                "wpslonik": "0.0.0-dev",
+                "php": "8.3.35"
+            },
+            "notes": "The plugin installs and its own tables are migrated, and the 2FA activation fatal (D-78) is fixed: successful DDL now returns truthy like upstream wpdb instead of 0, so the 'Failed to create table schema for wfls_2fa_secrets' RuntimeException is gone. Two analyzed gaps remain: SHOW VARIABLES LIKE (D-55) and a binary value compared with a text column (D-76, the wflivetraffichuman count). The block-listing CASE unifies its mixed text, bytea and integer result arms on the statement's table (D-77 closed), and the single-table block lookup runs on PostgreSQL (D-72 closed). The SELECT side of the schema-upgrade phase translates since D-79 v1 (R-078: ADD [COLUMN], ADD {UNIQUE} KEY, DROP/ADD PRIMARY KEY, ALTER COLUMN SET/DROP DEFAULT; multi-statement plans are applied in one transaction), and the activation re-run of ADD COLUMN now blocks only on 'column already exists' because the information_schema probes that gate the re-runs still fail on PostgreSQL (D-55); the CHANGE redefinition fails loud by design. Remaining: information_schema probes and SHOW VARIABLES (D-55), two CREATE TABLE statements (wfauditevents, wfsecurityevents - analysis pending). The compat log reports 59 events (28 shapes) for the plugin in the D-79 matrix run; the site itself keeps running."
+        }
+    ]
+}

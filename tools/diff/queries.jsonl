@@ -1,0 +1,14 @@
+{"id": "basic-select", "sql": "SELECT id, name FROM diff_items ORDER BY id", "ordered": true, "rules": ["R-001"]}
+{"id": "limit-offset", "sql": "SELECT id FROM diff_items ORDER BY id LIMIT 2, 2", "ordered": true, "rules": ["R-002"]}
+{"id": "ci-equal", "sql": "SELECT id FROM diff_items WHERE name = 'alpha'", "ordered": false, "rules": ["S-02"], "expect": "mismatch", "note": "citext absent in M2b schema (P-04 degraded path is M4); PG matches lowercase row only"}
+{"id": "ci-like", "sql": "SELECT id FROM diff_items WHERE name LIKE '%alp%'", "ordered": false, "rules": ["R-047"]}
+{"id": "null-order", "sql": "SELECT id FROM diff_items ORDER BY score, id", "ordered": true, "rules": ["S-05"]}
+{"id": "select-created", "sql": "SELECT id, created FROM diff_items ORDER BY id", "ordered": true, "rules": ["S-07"], "expect": "mismatch", "note": "sentinel read-back by design (PG 0001-01-01 vs MySQL 0000-00-00)"}
+{"id": "group-count", "sql": "SELECT score, COUNT(*) AS n FROM diff_items GROUP BY score", "ordered": false, "rules": ["S-03"]}
+{"id": "int-div", "sql": "SELECT score / 2 AS h FROM diff_items WHERE id = 1", "ordered": false, "rules": ["R-043"]}
+{"id": "int-div-repeating", "sql": "SELECT score / 3 AS h FROM diff_items WHERE id = 1", "ordered": false, "rules": ["R-043"]}
+{"id": "distinct-order", "sql": "SELECT DISTINCT score FROM diff_items ORDER BY score", "ordered": true, "rules": ["S-04"]}
+{"id": "text-int", "sql": "SELECT id FROM diff_items WHERE payload = 0", "ordered": false, "rules": ["S-01"], "expect": "mismatch", "note": "MySQL garbage-coercion ('hello' = 0 is true); documented divergence, no faithful PG form"}
+{"id": "backtick-limit", "sql": "SELECT `id` FROM `diff_items` ORDER BY `id` LIMIT 1, 3", "ordered": true, "rules": ["R-001", "R-002"]}
+{"id": "backslash-literal", "sql": "SELECT id FROM diff_items WHERE payload = 'a\\b'", "ordered": false, "rules": ["S-09"]}
+{"id": "decimal-div", "sql": "SELECT ratio / 2 AS h FROM diff_items WHERE id = 1", "ordered": false, "rules": ["R-043"]}

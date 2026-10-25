@@ -1,0 +1,12 @@
+.agents
+skills-lock.json
+docs
+AGENTS.md
+
+/vendor/
+/composer.lock
+/.phpunit.cache/
+/.phpunit.result.cache
+.freebuff/
+tools/matrix/out/
+*.log

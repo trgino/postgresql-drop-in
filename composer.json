@@ -1,0 +1,53 @@
+{
+  "name": "trgino/slonik",
+  "description": "PostgreSQL support for WordPress (wpdb drop-in with an AST-based MySQL-to-PostgreSQL translator).",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*",
+    "ext-pdo": "*",
+    "ext-pdo_pgsql": "*"
+  },
+  "suggest": {
+    "ext-mysqli": "Required only for `wp slonik migrate` (reads a MySQL source database)"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "php-stubs/wordpress-stubs": "6.4",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "phpstan/phpstan": "^1.11",
+    "phpunit/phpunit": "^9.6",
+    "squizlabs/php_codesniffer": "^3.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Slonik\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Slonik\\Tests\\Unit\\": "tests/unit/",
+      "Slonik\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "platform": {
+      "php": "7.4.33"
+    },
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "lint": "phpcs",
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "test": "phpunit",
+    "ci": [
+      "@lint",
+      "@analyse",
+      "@test"
+    ]
+  }
+}

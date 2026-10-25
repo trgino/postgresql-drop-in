@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="WP-Slonik">
+	<description>PHP 7.4 compatibility gate (minimum supported PHP). Style rules are added in M1+.</description>
+
+	<file>postgresql-drop-in.php</file>
+	<file>src</file>
+	<file>dropin</file>
+	<file>tests</file>
+	<file>tools</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/corpus/out/*</exclude-pattern>
+	<exclude-pattern>*/matrix/out/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="minimum_wp_version" value="6.4"/>
+</ruleset>

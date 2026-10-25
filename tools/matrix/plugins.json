@@ -1,0 +1,20 @@
+{
+  "tier1": [
+    "woocommerce",
+    "query-monitor",
+    "w3-total-cache"
+  ],
+  "popular": [
+    "akismet",
+    "classic-editor",
+    "wp-mail-smtp",
+    "contact-form-7",
+    "elementor",
+    "wp-super-cache",
+    "wordfence",
+    "all-in-one-wp-migration"
+  ],
+  "known_missing": [
+    "woocommerce-subscriptions"
+  ]
+}
